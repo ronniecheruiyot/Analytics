@@ -1,0 +1,4 @@
+Id,PaymentMode,Amount,Currency,PaymentReferenceCode,createdAt,updatedAt
+1,Mpesa,80000,USD,3gyy4erxn4,"2024-06-05 10:11:55","2024-06-05 10:11:55"
+2,Mpesa,75000,KES,648qaw8qwe,"2024-06-05 10:11:55","2024-06-05 10:11:55"
+3,"Credit Card",80000,USD,g4slanb6r4,"2024-06-05 10:11:55","2024-06-05 10:11:55"

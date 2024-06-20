@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int    @id @default(autoincrement())
+  fullName  String @db.VarChar(50)
+  email     String @unique @db.VarChar(50)
+  phone     Int    @unique @db.Int
+  password  String @db.VarChar(20)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Delegate {
+  id            Int   @id @default(autoincrement()) 
+  category      String? @db.VarChar(10)
+  fullName      String @db.VarChar(50)
+  email         String @unique @db.VarChar(50)
+  phone         String? @unique @db.VarChar(13)
+  ihrmNumber    String @unique @db.VarChar(20)
+  jobTitle      String @db.VarChar(50)
+  companyId     Int?   @db.Int
+  paymentId     Int?   @db.Int
+  sponsorCompany SponsorCompany? @relation(fields: [companyId], references: [id])
+  payment       Payment?         @relation(fields: [paymentId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model SponsorCompany {
+  id                 Int    @id @default(autoincrement())
+  companyName        String @db.VarChar(50)
+  employeeCount      Int?    @db.Int
+  contactPersonName  String? @db.VarChar(50)
+  contactPersonEmail String? @db.VarChar(50)
+  contactPersonPhone String?    @db.VarChar(13)
+  delegates          Delegate[]
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model Payment {
+  id                   Int    @id @default(autoincrement())
+  paymentMode          String @db.VarChar(6)
+  amount               Int    @db.Int
+  currency             String @db.VarChar(3)
+  paymentReferenceCode String @db.VarChar(100)
+  delegates            Delegate[]
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
