@@ -18,25 +18,32 @@ import dayjs from 'dayjs';
 
 import { useSelection } from '@/hooks/use-selection';
 
-function noop(): void {
-  // do nothing
-}
-
-export interface Customer {
+export interface Delegate {
   id: string;
-  avatar: string;
-  name: string;
+  fullName: string;
   email: string;
-  address: { city: string; state: string; country: string; street: string };
   phone: string;
+  jobTitle: string;
+  sponsorCompany: {
+    companyName: string;
+  };
+  payment: {
+    paymentMode: string;
+    amount: number;
+    currency: string;
+  };
   createdAt: Date;
 }
 
-interface CustomersTableProps {
+interface DelegatesTableProps {
   count?: number;
   page?: number;
-  rows?: Customer[];
+  rows?: Delegate[];
   rowsPerPage?: number;
+}
+
+function noop(): void {
+  // do nothing
 }
 
 export function DelegatesTable({
@@ -44,9 +51,10 @@ export function DelegatesTable({
   rows = [],
   page = 0,
   rowsPerPage = 0,
-}: CustomersTableProps): React.JSX.Element {
+}: DelegatesTableProps): React.JSX.Element {
+  
   const rowIds = React.useMemo(() => {
-    return rows.map((customer) => customer.id);
+    return rows.map((delegate) => delegate.id);
   }, [rows]);
 
   const { selectAll, deselectAll, selectOne, deselectOne, selected } = useSelection(rowIds);
@@ -73,10 +81,14 @@ export function DelegatesTable({
                   }}
                 />
               </TableCell>
-              <TableCell>Name</TableCell>
+              <TableCell>Full Name</TableCell>
               <TableCell>Email</TableCell>
-              <TableCell>Location</TableCell>
               <TableCell>Phone</TableCell>
+              <TableCell>Job Title</TableCell>
+              <TableCell>Company</TableCell>
+              <TableCell>Payment Mode</TableCell>
+              <TableCell>Amount</TableCell>
+              <TableCell>Currency</TableCell>
               <TableCell>Signed Up</TableCell>
             </TableRow>
           </TableHead>
@@ -98,17 +110,14 @@ export function DelegatesTable({
                       }}
                     />
                   </TableCell>
-                  <TableCell>
-                    <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
-                      <Avatar src={row.avatar} />
-                      <Typography variant="subtitle2">{row.name}</Typography>
-                    </Stack>
-                  </TableCell>
+                  <TableCell>{row.fullName}</TableCell>
                   <TableCell>{row.email}</TableCell>
-                  <TableCell>
-                    {row.address.city}, {row.address.state}, {row.address.country}
-                  </TableCell>
                   <TableCell>{row.phone}</TableCell>
+                  <TableCell>{row.jobTitle}</TableCell>
+                  <TableCell>{row.sponsorCompany?.companyName}</TableCell>
+                  <TableCell>{row.payment?.paymentMode}</TableCell>
+                  <TableCell>{row.payment?.amount}</TableCell>
+                  <TableCell>{row.payment?.currency}</TableCell>
                   <TableCell>{dayjs(row.createdAt).format('MMM D, YYYY')}</TableCell>
                 </TableRow>
               );
@@ -128,4 +137,26 @@ export function DelegatesTable({
       />
     </Card>
   );
+}
+
+export default function DelegatesPage(): React.JSX.Element {
+  const [delegates, setDelegates] = React.useState<Delegate[]>([]);
+  const [loading, setLoading] = React.useState<boolean>(true);
+
+  React.useEffect(() => {
+    async function fetchData() {
+      const response = await fetch('/api/delegates');
+      const data = await response.json();
+      setDelegates(data);
+      setLoading(false);
+    }
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  return <DelegatesTable rows={delegates} count={delegates.length} rowsPerPage={10} page={0} />;
 }

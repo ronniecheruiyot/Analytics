@@ -5,20 +5,21 @@ const prisma = new PrismaClient({ log: ['query', 'info', 'warn', 'error'], });
 
 export default async function fetch(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
-    const { data } = req.body;
-    console.log(data);
-      
-
     try {
       // Get all delegates
-      const users = await prisma.user.findMany()
+      const delegates = await prisma.delegate.findMany({
+        include: {
+          sponsorCompany: true,
+          payment: true,
+        },
+      });
 
-      res.status(200).json({ message: 'Data successfully fetched' });
+      res.status(200).send(delegates);
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Error fetching data' });
+      res.status(500).json({error: 'Failed to fetch data' });
     }
   } else {
-    res.status(405).json({ message: 'Method not allowed' });
+    res.setHeader('Allow', ['GET']);
+    res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }

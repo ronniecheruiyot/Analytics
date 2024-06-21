@@ -53,3 +53,31 @@ export function Delegates({ diff, trend, sx, value }: DelegatesProps): React.JSX
     </Card>
   );
 }
+
+type JsonData = {
+  // Replace with actual properties and types
+  [key: string]: any;
+};
+
+export async function GetAllDelegates() {
+  const [delegates, setDelegates] = React.useState([]);
+  // Get all delegates
+  const response = await fetch('/api/delegates', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  });
+  console.log(response);
+  //setDelegates(response)
+
+  if (response.ok) {
+    console.log('File data fetched from server');
+  } else {
+    console.error('Error fetching data from server');
+  }
+
+  return (
+    <div>delegates</div>
+  )
+}
