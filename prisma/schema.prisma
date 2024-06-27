@@ -43,6 +43,7 @@ model SponsorCompany {
   id                 Int    @id @default(autoincrement())
   companyName        String @db.VarChar(50)
   employeeCount      Int?    @db.Int
+  totalAmountPaid    Int? @db.Int
   contactPersonName  String? @db.VarChar(50)
   contactPersonEmail String? @db.VarChar(50)
   contactPersonPhone String?    @db.VarChar(13)
