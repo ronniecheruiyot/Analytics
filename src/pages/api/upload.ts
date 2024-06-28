@@ -64,15 +64,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 },
               },
             });
+            console.log('totalAmountPaid aggregate', totalAmountPaid._sum.amount);
+            
 
             company = await prisma.sponsorCompany.update({
               where: { id: company.id },
               data: {
                 employeeCount: newEmployeeCount,
-                totalAmountPaid: totalAmountPaid._sum.amount + record.amount,
+                totalAmountPaid: totalAmountPaid._sum.amount + record.Amount,
               },
             });
-            console.log('updated company', company);
+            console.log('updated company', company?.totalAmountPaid);
             
             
           } else {
@@ -85,7 +87,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 contactPersonEmail: record.ContactPersonEmail,
                 contactPersonPhone: record.ContactPersonPhone,
                 employeeCount: 1,
-                totalAmountPaid: record.amount,
+                totalAmountPaid: record.Amount,
               },
             });
 
