@@ -8,7 +8,7 @@ interface Data {
   Category: string;
   FullName: string;
   Email: string;
-  Phone: number;
+  Phone: string;
   IhrmNumber: string;
   JobTitle: string;
   CompanyId?: number;
@@ -29,12 +29,15 @@ const UploadList = () => {
 
   const handleFileUpload = async (json: JsonData[]) => {
     setData(json);
+    console.log(data);
+    
 
     // Send data to back-end
     const response = await fetch('/api/upload', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Cache-Control': 'no-store'
       },
       body: JSON.stringify({ data: json }),
     });
