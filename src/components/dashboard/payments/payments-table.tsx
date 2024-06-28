@@ -18,29 +18,26 @@ import dayjs from 'dayjs';
 
 import { useSelection } from '@/hooks/use-selection';
 
-export interface Companies {
-  id: string;
-  companyName: string;
-  employeeCount: string;
-  contactPersonName: string;
-  contactPersonEmail: string;
-  contactPersonPhone: string;
+export interface Payments {
+  id: string;             
+  paymentMode: string;         
+  amount: number;
+  currency: string;
+  paymentReferenceCode: string;
   delegates: {
-    payment: {
-      amount: number;
-      paymentMode: string,
+    email: string;
+    sponsorcompany: {
+      companyName: string;
     };
   }[];
-  delegateCount: number;
-  totalAmountPaid: number;
   createdAt: Date;
 }
 
 
-interface CompaniesTableProps {
+interface PaymentsTableProps {
   count?: number;
   page?: number;
-  rows?: Companies[];
+  rows?: Payments[];
   rowsPerPage?: number;
 }
 
@@ -48,16 +45,18 @@ function noop(): void {
   // do nothing
 }
 
-export function CompaniesTable({
+export function PaymentsTable({
   count = 0,
   rows = [],
   page = 0,
   rowsPerPage = 0,
-}: CompaniesTableProps): React.JSX.Element {
+}: PaymentsTableProps): React.JSX.Element {
   
   const rowIds = React.useMemo(() => {
-    return rows.map((Companies) => Companies.id);
+    return rows.map((Payments) => Payments.id);
   }, [rows]);
+  console.log('payment rows', rows);
+  
 
   const { selectAll, deselectAll, selectOne, deselectOne, selected } = useSelection(rowIds);
 
@@ -84,14 +83,13 @@ export function CompaniesTable({
                 />
               </TableCell>
               <TableCell>Id</TableCell>
+              <TableCell>Payment Reference</TableCell>
+              <TableCell>Amount</TableCell>
+              <TableCell>Currency</TableCell>
+              <TableCell>Payment Date</TableCell>
+              <TableCell>Delegate Email</TableCell>
               <TableCell>Company Name</TableCell>
-              <TableCell>Employee Count</TableCell>
-              <TableCell>Total Amount Paid</TableCell>
-              <TableCell>Payment Mode</TableCell>
-              <TableCell>Date Paid</TableCell>
-              <TableCell>Contact Person Name</TableCell>
-              <TableCell>Contact Person Email</TableCell>
-              <TableCell>Contact Person Phone</TableCell>
+              {/* <TableCell>Payment Status</TableCell> */}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -113,14 +111,12 @@ export function CompaniesTable({
                     />
                   </TableCell>
                   <TableCell>{row.id}</TableCell>
-                  <TableCell>{row.companyName}</TableCell>
-                  <TableCell>{row.delegateCount}</TableCell>
-                  <TableCell>{row.totalAmountPaid}</TableCell>
-                  <TableCell>{row.delegates[0]?.payment?.paymentMode}</TableCell>
+                  <TableCell>{row.paymentReferenceCode}</TableCell>
+                  <TableCell>{row.amount}</TableCell>
+                  <TableCell>{row.currency}</TableCell>
                   <TableCell>{dayjs(row.createdAt).format('MMM D, YYYY')}</TableCell>
-                  <TableCell>{row.contactPersonName}</TableCell>
-                  <TableCell>{row.contactPersonEmail}</TableCell>
-                  <TableCell>{row.contactPersonPhone}</TableCell>
+                  <TableCell>{row.delegates[0]?.email}</TableCell>
+                  <TableCell>{row.delegates[0]?.sponsorcompany?.companyName}</TableCell>
                 </TableRow>
               );
             })}
@@ -142,14 +138,14 @@ export function CompaniesTable({
 }
 
 export default function CompaniesPage(): React.JSX.Element {
-  const [Companies, setCompanies] = React.useState<Companies[]>([]);
+  const [Payments, setPayments] = React.useState<Payments[]>([]);
   const [loading, setLoading] = React.useState<boolean>(true);
 
   React.useEffect(() => {
     async function fetchData() {
-      const response = await fetch('/api/Companies');
+      const response = await fetch('/api/Payments');
       const data = await response.json();
-      setCompanies(data);
+      setPayments(data);
       setLoading(false);
     }
 
@@ -160,5 +156,5 @@ export default function CompaniesPage(): React.JSX.Element {
     return <div>Loading...</div>;
   }
 
-  return <CompaniesTable rows={Companies} count={Companies.length} rowsPerPage={10} page={0} />;
+  return <PaymentsTable rows={Payments} count={Payments.length} rowsPerPage={10} page={0} />;
 }
