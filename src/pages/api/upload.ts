@@ -36,7 +36,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           //Check if delegate's company exists
           let company = await prisma.sponsorCompany.findFirst({
             where: {
-              companyName: record.companyName
+              companyName: record.CompanyName
             },
             include: {
               delegates: {
@@ -77,12 +77,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             
           } else {
             // Adjust according to your JSON structure
-            const company = await prisma.sponsorCompany.create({
+
+              company = await prisma.sponsorCompany.create({
               data: {
                 companyName: record.CompanyName,
                 contactPersonName: record.ContactPersonName,
                 contactPersonEmail: record.ContactPersonEmail,
-                contactPersonPhone: record.ContactPersonPhone
+                contactPersonPhone: record.ContactPersonPhone,
+                employeeCount: 1,
+                totalAmountPaid: record.amount,
               },
             });
 
