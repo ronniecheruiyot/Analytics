@@ -59,7 +59,6 @@ export default async function fetch(req: NextApiRequest, res: NextApiResponse) {
           }
         },
       });
-
       console.log('createdAt', typeof(companies[0].createdAt));
       
 
