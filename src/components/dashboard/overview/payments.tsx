@@ -15,33 +15,33 @@ import type { ApexOptions } from 'apexcharts';
 
 import { Chart } from '@/components/core/chart';
 
-export interface SignupsProps {
+export interface PaymentsProps {
   chartSeries: { name: string; data: number[] }[];
   sx?: SxProps;
 }
 
-export function Signups({ chartSeries, sx }: SignupsProps): React.JSX.Element {
+export function Payments({ chartSeries, sx }: PaymentsProps): React.JSX.Element {
   const chartOptions = useChartOptions();
 
   return (
     <Card sx={sx}>
       <CardHeader
-        action={
-          <Button color="inherit" size="small" startIcon={<ArrowClockwiseIcon fontSize="var(--icon-fontSize-md)" />}>
-            Sync
-          </Button>
-        }
-        title="Signups"
+        // action={
+        //   <Button color="inherit" size="small" startIcon={<ArrowClockwiseIcon fontSize="var(--icon-fontSize-md)" />}>
+        //     Sync
+        //   </Button>
+        // }
+        title="Payments"
       />
       <CardContent>
         <Chart height={350} options={chartOptions} series={chartSeries} type="bar" width="100%" />
       </CardContent>
-      <Divider />
-      <CardActions sx={{ justifyContent: 'flex-end' }}>
+      {/* <Divider /> */}
+      {/* <CardActions sx={{ justifyContent: 'flex-end' }}>
         <Button color="inherit" endIcon={<ArrowRightIcon fontSize="var(--icon-fontSize-md)" />} size="small">
           Overview
         </Button>
-      </CardActions>
+      </CardActions> */}
     </Card>
   );
 }
@@ -67,12 +67,13 @@ function useChartOptions(): ApexOptions {
     xaxis: {
       axisBorder: { color: theme.palette.divider, show: true },
       axisTicks: { color: theme.palette.divider, show: true },
-      categories: ['Sun', 'Mon', 'Tue', 'Wen', 'Thur', 'Fri', 'Sat'],
+      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
       labels: { offsetY: 5, style: { colors: theme.palette.text.secondary } },
     },
     yaxis: {
       labels: {
-        formatter: (value) => (value > 0 ? `${value}K` : `${value}`),
+        // formatter: (value) => (value > 0 ? `${value}K` : `${value}`),
+        formatter: (value) => (value > 0 ? `${value}` : `${value}`),
         offsetX: -10,
         style: { colors: theme.palette.text.secondary },
       },

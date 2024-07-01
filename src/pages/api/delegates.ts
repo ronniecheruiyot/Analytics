@@ -16,6 +16,7 @@ export default async function fetch(req: NextApiRequest, res: NextApiResponse) {
 
       res.status(200).send(delegates);
     } catch (error) {
+      console.log("error!!!!", error)
       res.status(500).json({error: 'Failed to fetch data' });
     }
   } else {

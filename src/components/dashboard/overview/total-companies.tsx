@@ -23,7 +23,7 @@ export function TotalCompanies({ diff, trend, sx, value }: TotalCompaniesProps):
   return (
     <Card sx={sx}>
       <CardContent>
-        <Stack spacing={2}>
+        <Stack spacing={3}>
           <Stack direction="row" sx={{ alignItems: 'flex-start', justifyContent: 'space-between' }} spacing={3}>
             <Stack spacing={1}>
               <Typography color="text.secondary" variant="overline">

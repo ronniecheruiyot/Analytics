@@ -32,9 +32,8 @@ model Delegate {
   ihrmNumber    String @unique @db.VarChar(20)
   jobTitle      String @db.VarChar(50)
   companyId     Int?   @db.Int
-  paymentId     Int?   @db.Int
   sponsorCompany SponsorCompany? @relation(fields: [companyId], references: [id])
-  payment       Payment?         @relation(fields: [paymentId], references: [id])
+  payment       Payment[]
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
@@ -58,7 +57,8 @@ model Payment {
   amount               Int    @db.Int
   currency             String @db.VarChar(3)
   paymentReferenceCode String @db.VarChar(100)
-  delegates            Delegate[]
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
+  delegateId           Int    @db.Int
+  delegate             Delegate @relation(fields: [delegateId], references: [id])
 }

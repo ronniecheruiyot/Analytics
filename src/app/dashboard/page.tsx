@@ -7,25 +7,27 @@ import { config } from '@/config';
 import { Delegates } from '@/components/dashboard/overview/delegates';
 import { LatestOrders } from '@/components/dashboard/overview/latest-orders';
 import { LatestProducts } from '@/components/dashboard/overview/latest-products';
-import { Signups } from '@/components/dashboard/overview/signups';
+import { Payments } from '@/components/dashboard/overview/payments';
 import { TotalCompanies } from '@/components/dashboard/overview/total-companies';
 import { Traffic } from '@/components/dashboard/overview/traffic';
 import { FullPayments } from '@/components/dashboard/overview/full-payments';
 import { PartialPayments } from '@/components/dashboard/overview/partial-payments';
 import { promises as fs } from 'fs';
 import UploadList from '@/components/dashboard/overview/upload-list';
+import { DelegatesChart } from '@/components/dashboard/overview/delegatesChart';
 
 export const metadata = { title: `Overview | Dashboard | ${config.site.name}` } satisfies Metadata;
 
 // Define types for the data
 interface Payment {
-  Id: number;
-  PaymentMode: string;
-  Amount: number;
-  Currency: string;
-  PaymentReferenceCode: string;
+  id: number;
+  paymentMode: string;
+  amount: number;
+  currency: string;
+  paymentReferenceCode: string;
   createdAt: string;
   updatedAt: string;
+  delegateId: number;
 }
 interface DataProps {
   delegatesCount: number;
@@ -35,13 +37,15 @@ interface DataProps {
   fullPaymentSum: number;
   partialPaymentSum: number;
   paymentSum: number;
+  paymentsbyMonth: number[]
 }
 
 const fetchData = async (): Promise<DataProps> => {
   const endpoints = {
-    delegates: 'http://localhost:6001/api/delegates',
-    totalCompanies: 'http://localhost:6001/api/companies',
-    totalPayments: 'http://localhost:6001/api/payments',
+    delegates: 'http://localhost:3000/api/delegates',
+    totalCompanies: 'http://localhost:3000/api/companies',
+    totalPayments: 'http://localhost:3000/api/payments?endpoint=getAllPayments',
+    groupedPayments: 'http://localhost:3000/api/payments?endpoint=getPaymentsBy',
   };
 
   const fetchEndpoint = async (url: string) => {
@@ -55,15 +59,19 @@ const fetchData = async (): Promise<DataProps> => {
     }
     return response.json();
   };
-
-  const [delegates, totalCompanies, totalPayments] = await Promise.all([
+  
+  const [delegates, totalCompanies, totalPayments, groupedPayments] = await Promise.all([
     fetchEndpoint(endpoints.delegates),
     fetchEndpoint(endpoints.totalCompanies),
     fetchEndpoint(endpoints.totalPayments),
+    fetchEndpoint(endpoints.groupedPayments),
   ]);
+
+  const paymentsbyMonth = Object.values(groupedPayments).map(item => item.totalAmount)
+  // console.log('paymentsbyMonth', paymentsbyMonth)
   const delegatesCount = delegates.length;
   const totalCompaniesCount = totalCompanies.length;
-  const fullPaymentCount = totalPayments.length;
+  const fullPaymentCount = totalPayments.filter((payment: Payment) => payment.amount >= 80000).length;
 
   const fullPayment = 80000;
   let fullPaymentSum = 0;
@@ -71,16 +79,16 @@ const fetchData = async (): Promise<DataProps> => {
   let allPaymentSum = 0;
 
   totalPayments.forEach((payment: any) => {
-    if (payment.Amount === fullPayment) {
-      fullPaymentSum += payment.Amount;
-    } else if (payment.Amount < fullPayment) {
-      partialPaymentSum += payment.Amount;
+    if (payment.amount === fullPayment) {
+      fullPaymentSum += payment.amount;
+    } else if (payment.amount < fullPayment) {
+      partialPaymentSum += payment.amount;
     }
     allPaymentSum += payment.Amount;
   });
   
-  const partialPaymentsCount = totalPayments.filter((payment: Payment) => payment.Amount < fullPayment).length;
-
+  const partialPaymentsCount = totalPayments.filter((payment: Payment) => payment.amount < fullPayment).length;
+  
   return {
     delegatesCount,
     totalCompaniesCount,
@@ -89,6 +97,7 @@ const fetchData = async (): Promise<DataProps> => {
     fullPaymentSum:fullPaymentSum,
     partialPaymentSum:partialPaymentSum,
     paymentSum:allPaymentSum,
+    paymentsbyMonth: paymentsbyMonth
   };
 };
 const Page = async () =>  {
@@ -120,18 +129,26 @@ const Content = async ({ dataPromise }: { dataPromise: Promise<DataProps> }) => 
       <Grid lg={3} sm={6} xs={12}>
         <PartialPayments sx={{ height: '100%' }} value={data.partialPaymentsCount} sum={data.partialPaymentSum} />
       </Grid>
-      <Grid lg={8} xs={12}>
-        <Signups
+      <Grid lg={6} xs={12}>
+        <Payments
           chartSeries={[
-            { name: 'Signups', data: [18, 16, 5, 8, 3, 14, 14] },
+            { name: 'Payments', data: data.paymentsbyMonth },
           ]}
           sx={{ height: '100%' }}
         />
       </Grid>
-      <Grid lg={4} md={6} xs={12}>
-        <Traffic chartSeries={[63, 15, 22]} labels={['Desktop', 'Tablet', 'Phone']} sx={{ height: '100%' }} />
+      <Grid lg={6} xs={12}>
+        <DelegatesChart
+          chartSeries={[
+            { name: 'Payments', data: data.paymentsbyMonth },
+          ]}
+          sx={{ height: '100%' }}
+        />
       </Grid>
-      <Grid lg={4} md={6} xs={12}>
+      {/* <Grid lg={4} md={6} xs={12}>
+        <Traffic chartSeries={[63, 15, 22]} labels={['Desktop', 'Tablet', 'Phone']} sx={{ height: '100%' }} />
+      </Grid> */}
+      {/* <Grid lg={4} md={6} xs={12}>
         <LatestProducts
           products={[
             {
@@ -216,7 +233,7 @@ const Content = async ({ dataPromise }: { dataPromise: Promise<DataProps> }) => 
           ]}
           sx={{ height: '100%' }}
         />
-      </Grid>
+      </Grid> */}
     </Grid>
   );
 }
