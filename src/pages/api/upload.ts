@@ -15,23 +15,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       for (const record of data) {
         const phoneString = record.Phone.toString()
         console.log('record',typeof(phoneString));
-        
-        //Check if delegate exists
-        const delegateExist = await prisma.delegate.findFirst({
-          where: {
-            fullName: record.FullName,
-            email: record.Email,
-            phone: phoneString
-          },
-        });
-        console.log('delegateExist',delegateExist);
-        
-        if (delegateExist) {
-          // If delegate exists, return error message
-          //console.log('Delegate already exists:', record.FullName);
-          return res.status(400).json({ error: `Delegate already exists: ${record.FullName}` });
-        }
-          // Create delegate if they don't exist
           
           //Check if delegate's company exists
           let company = await prisma.sponsorCompany.findFirst({
@@ -57,10 +40,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                   amount: true,
               },
               where: {
-                delegates: {
-                  some: {
+                delegate: {
                     companyId: company.id,
-                  },
                 },
               },
             });
@@ -97,22 +78,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
           }
           
-
-          const payment = await prisma.payment.create({
-            data: {
-              paymentMode: record.PaymentMode,
-              amount: record.Amount,
-              currency: record.Currency,
-              paymentReferenceCode: record.PaymentReferenceCode
-            },
-          });
-
-          if (!payment || !payment.id) {
-            console.error('Failed to create payment:', payment);
-            throw new Error('Failed to create payment');
-          }
-                  
-          await prisma.delegate.create({
+          //Check if delegate exists
+        const delegateExist = await prisma.delegate.findFirst({
+          where: {
+            fullName: record.FullName,
+            email: record.Email,
+            phone: phoneString
+          },
+        });
+        console.log('delegateExist',delegateExist);
+        
+        if (!delegateExist) {
+          /** 
+           * If delegate DOES NOT exist,
+           * 1. Create delegate
+           * 2. Create payment and tie to the delegate
+           */ 
+          const delegate = await prisma.delegate.create({
             data: {
               category: record.Category,
               fullName: record.FullName,
@@ -121,11 +103,44 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               ihrmNumber: record.IhrmNumber,
               jobTitle: record.JobTitle,
               companyId: company.id,
-              paymentId: payment.id,
+              // paymentId: payment.id,
             },
           });
-        
-        
+
+          if (!delegate || !delegate.id) {
+            console.error('Failed to create delegate:', delegate);
+            throw new Error('Failed to create new delegate');
+          }
+
+          const payment = await prisma.payment.create({
+            data: {
+              paymentMode: record.PaymentMode,
+              amount: record.Amount,
+              currency: record.Currency,
+              paymentReferenceCode: record.PaymentReferenceCode,
+              delegateId: delegate.id
+            },
+          });
+
+          if (!payment || !payment.id) {
+            console.error('Failed to create payment:', payment);
+            throw new Error('Failed to create payment');
+          }
+        } else{ 
+          /** 
+           * If delegate EXISTS,
+           * Create a payment tied to this delegate
+           */ 
+          await prisma.payment.create({
+            data: {
+              paymentMode: record.PaymentMode,
+              amount: record.Amount,
+              currency: record.Currency,
+              paymentReferenceCode: record.PaymentReferenceCode,
+              delegateId: delegateExist.id
+            },
+          });
+        }
       }
       
       res.status(200).json({ message: 'Data successfully stored' });

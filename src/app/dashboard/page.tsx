@@ -7,13 +7,14 @@ import { config } from '@/config';
 import { Delegates } from '@/components/dashboard/overview/delegates';
 import { LatestOrders } from '@/components/dashboard/overview/latest-orders';
 import { LatestProducts } from '@/components/dashboard/overview/latest-products';
-import { Signups } from '@/components/dashboard/overview/signups';
+import { Payments } from '@/components/dashboard/overview/payments';
 import { TotalCompanies } from '@/components/dashboard/overview/total-companies';
 import { Traffic } from '@/components/dashboard/overview/traffic';
 import { FullPayments } from '@/components/dashboard/overview/full-payments';
 import { PartialPayments } from '@/components/dashboard/overview/partial-payments';
 import { promises as fs } from 'fs';
 import UploadList from '@/components/dashboard/overview/upload-list';
+import { DelegatesChart } from '@/components/dashboard/overview/delegatesChart';
 
 export const metadata = { title: `Overview | Dashboard | ${config.site.name}` } satisfies Metadata;
 
@@ -26,6 +27,7 @@ interface Payment {
   paymentReferenceCode: string;
   createdAt: string;
   updatedAt: string;
+  delegateId: number;
 }
 interface DataProps {
   delegatesCount: number;
@@ -69,7 +71,7 @@ const fetchData = async (): Promise<DataProps> => {
   // console.log('paymentsbyMonth', paymentsbyMonth)
   const delegatesCount = delegates.length;
   const totalCompaniesCount = totalCompanies.length;
-  const fullPaymentCount = totalPayments.length;
+  const fullPaymentCount = totalPayments.filter((payment: Payment) => payment.amount >= 80000).length;
 
   const fullPayment = 80000;
   let fullPaymentSum = 0;
@@ -127,18 +129,26 @@ const Content = async ({ dataPromise }: { dataPromise: Promise<DataProps> }) => 
       <Grid lg={3} sm={6} xs={12}>
         <PartialPayments sx={{ height: '100%' }} value={data.partialPaymentsCount} sum={data.partialPaymentSum} />
       </Grid>
-      <Grid lg={8} xs={12}>
-        <Signups
+      <Grid lg={6} xs={12}>
+        <Payments
           chartSeries={[
-            { name: 'Signups', data: data.paymentsbyMonth },
+            { name: 'Payments', data: data.paymentsbyMonth },
           ]}
           sx={{ height: '100%' }}
         />
       </Grid>
-      <Grid lg={4} md={6} xs={12}>
-        <Traffic chartSeries={[63, 15, 22]} labels={['Desktop', 'Tablet', 'Phone']} sx={{ height: '100%' }} />
+      <Grid lg={6} xs={12}>
+        <DelegatesChart
+          chartSeries={[
+            { name: 'Payments', data: data.paymentsbyMonth },
+          ]}
+          sx={{ height: '100%' }}
+        />
       </Grid>
-      <Grid lg={4} md={6} xs={12}>
+      {/* <Grid lg={4} md={6} xs={12}>
+        <Traffic chartSeries={[63, 15, 22]} labels={['Desktop', 'Tablet', 'Phone']} sx={{ height: '100%' }} />
+      </Grid> */}
+      {/* <Grid lg={4} md={6} xs={12}>
         <LatestProducts
           products={[
             {
@@ -223,7 +233,7 @@ const Content = async ({ dataPromise }: { dataPromise: Promise<DataProps> }) => 
           ]}
           sx={{ height: '100%' }}
         />
-      </Grid>
+      </Grid> */}
     </Grid>
   );
 }

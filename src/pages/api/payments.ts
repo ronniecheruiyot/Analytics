@@ -15,7 +15,7 @@ export default async function fetch(req: NextApiRequest, res: NextApiResponse) {
           // Get all payments
           const payments = await prisma.payment.findMany({
             include: {
-              delegates: {
+              delegate: {
                 include: {
                     sponsorCompany: true,
                 }

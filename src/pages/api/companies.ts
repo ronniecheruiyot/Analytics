@@ -15,15 +15,15 @@ interface Delegate {
   paymentId: number;
   createdAt: Date;
   updatedAt: Date;
-  payment: {
-      id: number;
-      paymentMode: string;
-      amount: number;
-      currency: string;
-      paymentReferenceCode: string;
-      createdAt: Date;
-      updatedAt: Date;
-  };
+  // payment: {
+  //     id: number;
+  //     paymentMode: string;
+  //     amount: number;
+  //     currency: string;
+  //     paymentReferenceCode: string;
+  //     createdAt: Date;
+  //     updatedAt: Date;
+  // };
 }
 
 interface Company {
@@ -61,7 +61,6 @@ export default async function fetch(req: NextApiRequest, res: NextApiResponse) {
       });
       console.log('createdAt', typeof(companies[0].createdAt));
       
-
       const companiesWithAggregates = companies.reduce<{ [key: string]: AggregatedCompany }>((acc, company) => {
         const companyName = company.companyName;
         if (!acc[companyName]) {
