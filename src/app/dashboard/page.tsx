@@ -37,12 +37,14 @@ interface DataProps {
   fullPaymentSum: number;
   partialPaymentSum: number;
   paymentSum: number;
-  paymentsbyMonth: number[]
+  paymentsbyMonth: number[];
+  delegatesByMonth: number[];
 }
 
 const fetchData = async (): Promise<DataProps> => {
   const endpoints = {
-    delegates: 'http://localhost:3000/api/delegates',
+    delegates: 'http://localhost:3000/api/delegates?endpoint=getAllDelegates',
+    groupedDelegates: 'http://localhost:3000/api/delegates?endpoint=getDelegatesByMonth',
     totalCompanies: 'http://localhost:3000/api/companies',
     totalPayments: 'http://localhost:3000/api/payments?endpoint=getAllPayments',
     groupedPayments: 'http://localhost:3000/api/payments?endpoint=getPaymentsBy',
@@ -60,14 +62,16 @@ const fetchData = async (): Promise<DataProps> => {
     return response.json();
   };
   
-  const [delegates, totalCompanies, totalPayments, groupedPayments] = await Promise.all([
+  const [delegates, totalCompanies, totalPayments, groupedPayments, groupedDelegates] = await Promise.all([
     fetchEndpoint(endpoints.delegates),
     fetchEndpoint(endpoints.totalCompanies),
     fetchEndpoint(endpoints.totalPayments),
     fetchEndpoint(endpoints.groupedPayments),
+    fetchEndpoint(endpoints.groupedDelegates),
   ]);
 
   const paymentsbyMonth = Object.values(groupedPayments).map(item => item.totalAmount)
+  const delegatesByMonth = Object.values(groupedDelegates).map(item => item.totalDelegates)
   // console.log('paymentsbyMonth', paymentsbyMonth)
   const delegatesCount = delegates.length;
   const totalCompaniesCount = totalCompanies.length;
@@ -97,7 +101,8 @@ const fetchData = async (): Promise<DataProps> => {
     fullPaymentSum:fullPaymentSum,
     partialPaymentSum:partialPaymentSum,
     paymentSum:allPaymentSum,
-    paymentsbyMonth: paymentsbyMonth
+    paymentsbyMonth: paymentsbyMonth,
+    delegatesByMonth: delegatesByMonth
   };
 };
 const Page = async () =>  {
@@ -140,7 +145,7 @@ const Content = async ({ dataPromise }: { dataPromise: Promise<DataProps> }) => 
       <Grid lg={6} xs={12}>
         <DelegatesChart
           chartSeries={[
-            { name: 'Payments', data: data.paymentsbyMonth },
+            { name: 'Delegates', data: data.delegatesByMonth },
           ]}
           sx={{ height: '100%' }}
         />
