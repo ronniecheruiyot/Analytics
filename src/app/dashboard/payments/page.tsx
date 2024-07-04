@@ -42,7 +42,7 @@ type Props = {
 
 
 async function getPayments() {
-  const res = await fetch(`http://localhost:3000/api/payments`, { cache: 'no-store' })
+  const res = await fetch(`http://localhost:3000/api/payments?endpoint=getAllPayments`, { cache: 'no-store' })
   const payments = await res.json()
   return payments
 }
