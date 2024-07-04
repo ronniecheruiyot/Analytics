@@ -14,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // Insert data into the database
       for (const record of data) {
         const phoneString = record.Phone.toString()
-        console.log('record',typeof(phoneString));
+        //console.log('phoneString',phoneString);
           
           //Check if delegate's company exists
           let company = await prisma.sponsorCompany.findFirst({
@@ -60,13 +60,29 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             
           } else {
             // Adjust according to your JSON structure
-
+              let contactPerson = {
+                contactPersonNameStr: '',
+                contactPersonEmailStr: '',
+                contactPersonPhoneStr: ''
+              }
+              
+              if (record.ContactPersonName === undefined || record.ContactPersonEmail === undefined || record.ContactPersonPhone === undefined) {
+                record.ContactPersonName = null;
+                record.ContactPersonEmail = null;
+                record.ContactPersonPhone = null;
+              } else {
+                contactPerson.contactPersonNameStr = record.ContactPersonName;
+                contactPerson.contactPersonEmailStr = record.ContactPersonEmail;
+                contactPerson.contactPersonPhoneStr = record.ContactPersonPhone.toString();
+              }
+              console.log('contactPerson', contactPerson);
+              
               company = await prisma.sponsorCompany.create({
               data: {
                 companyName: record.CompanyName,
-                contactPersonName: record.ContactPersonName,
-                contactPersonEmail: record.ContactPersonEmail,
-                contactPersonPhone: record.ContactPersonPhone,
+                contactPersonName: contactPerson.contactPersonNameStr,
+                contactPersonEmail: contactPerson.contactPersonEmailStr,
+                contactPersonPhone: contactPerson.contactPersonPhoneStr,
                 employeeCount: 1,
                 totalAmountPaid: record.Amount,
               },
@@ -86,7 +102,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             phone: phoneString
           },
         });
-        console.log('delegateExist',delegateExist);
+        // console.log('delegateExist',delegateExist);
         
         if (!delegateExist) {
           /** 
@@ -105,7 +121,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               companyId: company.id,
               // paymentId: payment.id,
             },
-          });
+         });
 
           if (!delegate || !delegate.id) {
             console.error('Failed to create delegate:', delegate);
