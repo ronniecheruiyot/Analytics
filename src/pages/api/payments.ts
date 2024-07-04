@@ -59,6 +59,8 @@ export default async function fetch(req: NextApiRequest, res: NextApiResponse) {
             },
           });
 
+          // console.log("orderedPayments", orderedPayments)
+
           const groupPaymentsByMonth = orderedPayments.reduce((acc, curr) => {
             const month = curr.createdAt.getMonth() + 1; // getMonth() is zero-based, so add 1
             const year = curr.createdAt.getFullYear();
@@ -74,6 +76,7 @@ export default async function fetch(req: NextApiRequest, res: NextApiResponse) {
 
             return acc;
           }, {});
+          console.log("groupPaymentsByMonth", groupPaymentsByMonth)
 
           // Fill in the missing months with 0 amount
           const filledResults = monthsOfYear.map((date) => {

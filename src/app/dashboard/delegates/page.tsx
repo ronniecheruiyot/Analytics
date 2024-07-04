@@ -37,7 +37,7 @@ type Props = {
 };
 
 async function getDelegates() {
-  const res = await fetch(`http://localhost:3000/api/delegates`, { cache: 'no-store' })
+  const res = await fetch(`http://localhost:3000/api/delegates?endpoint=getAllDelegates`, { cache: 'no-store' })
   const delegates = await res.json()
   return delegates
 }
