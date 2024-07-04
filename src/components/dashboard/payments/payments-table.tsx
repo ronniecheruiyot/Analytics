@@ -24,12 +24,12 @@ export interface Payments {
   amount: number;
   currency: string;
   paymentReferenceCode: string;
-  delegates: {
+  delegate: {
     email: string;
-    sponsorcompany: {
+    sponsorCompany: {
       companyName: string;
     };
-  }[];
+  };
   createdAt: Date;
 }
 
@@ -115,8 +115,8 @@ export function PaymentsTable({
                   <TableCell>{row.amount}</TableCell>
                   <TableCell>{row.currency}</TableCell>
                   <TableCell>{dayjs(row.createdAt).format('MMM D, YYYY')}</TableCell>
-                  <TableCell>{row.delegates[0]?.email}</TableCell>
-                  <TableCell>{row.delegates[0]?.sponsorcompany?.companyName}</TableCell>
+                  <TableCell>{row.delegate?.email}</TableCell>
+                  <TableCell>{row.delegate?.sponsorCompany?.companyName}</TableCell>
                 </TableRow>
               );
             })}
