@@ -15,6 +15,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       for (const record of data) {
         const phoneString = record.Phone.toString()
         //console.log('phoneString',phoneString);
+
+        //Check if delegate exists
+        const delegateExist = await prisma.delegate.findFirst({
+          where: {
+            fullName: record.FullName,
+            email: record.Email,
+            phone: phoneString
+          },
+        });
+        // console.log('delegateExist',delegateExist);
           
           //Check if delegate's company exists
           let company = await prisma.sponsorCompany.findFirst({
@@ -34,7 +44,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           // Update the amount paid and employee count
           //console.log('companyExist',companyExist);
           if (company) {
-            const newEmployeeCount = company.employeeCount + 1;
+            let newEmployeeCount = company.employeeCount;
+            if (!delegateExist) {
+              newEmployeeCount = company.employeeCount + 1;
+            }
             const totalAmountPaid = await prisma.payment.aggregate({
               _sum: {
                   amount: true,
@@ -94,15 +107,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
           }
           
-          //Check if delegate exists
-        const delegateExist = await prisma.delegate.findFirst({
-          where: {
-            fullName: record.FullName,
-            email: record.Email,
-            phone: phoneString
-          },
-        });
-        // console.log('delegateExist',delegateExist);
+        
         
         if (!delegateExist) {
           /** 
