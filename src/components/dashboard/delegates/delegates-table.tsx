@@ -31,7 +31,7 @@ export interface Delegate {
     paymentMode: string;
     amount: number;
     currency: string;
-  };
+  }[];
   createdAt: Date;
 }
 
@@ -52,6 +52,7 @@ export function DelegatesTable({
   page = 0,
   rowsPerPage = 0,
 }: DelegatesTableProps): React.JSX.Element {
+  
   
   const rowIds = React.useMemo(() => {
     return rows.map((delegate) => delegate.id);
@@ -95,6 +96,7 @@ export function DelegatesTable({
           <TableBody>
             {rows.map((row) => {
               const isSelected = selected?.has(row.id);
+              console.log('rows',row.payment[0]?.paymentMode);
 
               return (
                 <TableRow hover key={row.id} selected={isSelected}>
@@ -115,9 +117,9 @@ export function DelegatesTable({
                   <TableCell>{row.phone}</TableCell>
                   <TableCell>{row.jobTitle}</TableCell>
                   <TableCell>{row.sponsorCompany?.companyName}</TableCell>
-                  <TableCell>{row.payment?.paymentMode}</TableCell>
-                  <TableCell>{row.payment?.amount}</TableCell>
-                  <TableCell>{row.payment?.currency}</TableCell>
+                  <TableCell>{row.payment[0]?.paymentMode}</TableCell>
+                  <TableCell>{row.payment[0]?.amount}</TableCell>
+                  <TableCell>{row.payment[0]?.currency}</TableCell>
                   <TableCell>{dayjs(row.createdAt).format('MMM D, YYYY')}</TableCell>
                 </TableRow>
               );

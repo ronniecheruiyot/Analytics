@@ -29,7 +29,7 @@ export interface Companies {
     payment: {
       amount: number;
       paymentMode: string,
-    };
+    }[];
   }[];
   delegateCount: number;
   totalAmountPaid: number;
@@ -116,7 +116,7 @@ export function CompaniesTable({
                   <TableCell>{row.companyName}</TableCell>
                   <TableCell>{row.delegateCount}</TableCell>
                   <TableCell>{row.totalAmountPaid}</TableCell>
-                  <TableCell>{row.delegates[0]?.payment?.paymentMode}</TableCell>
+                  <TableCell>{row.delegates[0]?.payment[0]?.paymentMode}</TableCell>
                   <TableCell>{dayjs(row.createdAt).format('MMM D, YYYY')}</TableCell>
                   <TableCell>{row.contactPersonName}</TableCell>
                   <TableCell>{row.contactPersonEmail}</TableCell>
