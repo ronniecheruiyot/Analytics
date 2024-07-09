@@ -39,17 +39,17 @@ interface PaymentsTableProps {
   page?: number;
   rows?: Payments[];
   rowsPerPage?: number;
-}
-
-function noop(): void {
-  // do nothing
-}
+  onPageChange: (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => void;
+  onRowsPerPageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+};
 
 export function PaymentsTable({
   count = 0,
   rows = [],
   page = 0,
   rowsPerPage = 0,
+  onPageChange,
+  onRowsPerPageChange,
 }: PaymentsTableProps): React.JSX.Element {
   
   const rowIds = React.useMemo(() => {
@@ -127,34 +127,12 @@ export function PaymentsTable({
       <TablePagination
         component="div"
         count={count}
-        onPageChange={noop}
-        onRowsPerPageChange={noop}
+        onPageChange={onPageChange}
+        onRowsPerPageChange={onRowsPerPageChange}
         page={page}
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[5, 10, 25]}
       />
     </Card>
   );
-}
-
-export default function CompaniesPage(): React.JSX.Element {
-  const [Payments, setPayments] = React.useState<Payments[]>([]);
-  const [loading, setLoading] = React.useState<boolean>(true);
-
-  React.useEffect(() => {
-    async function fetchData() {
-      const response = await fetch('/api/Payments');
-      const data = await response.json();
-      setPayments(data);
-      setLoading(false);
-    }
-
-    fetchData();
-  }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  return <PaymentsTable rows={Payments} count={Payments.length} rowsPerPage={10} page={0} />;
-}
+};
