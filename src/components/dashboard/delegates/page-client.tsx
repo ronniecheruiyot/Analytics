@@ -24,7 +24,7 @@ type DelegateWithRelations = {
     paymentMode: string;
     amount: number;
     currency: string;
-  };
+  }[];
   createdAt: Date;
 };
 
