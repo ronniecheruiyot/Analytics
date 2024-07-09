@@ -9,6 +9,7 @@ import { Download as DownloadIcon } from '@phosphor-icons/react/dist/ssr/Downloa
 import { DelegatesFilters } from '@/components/dashboard/delegates/delegates-filters';
 import { DelegatesTable } from '@/components/dashboard/delegates/delegates-table';
 import UploadList from '@/components/dashboard/overview/upload-list';
+import { exportToExcel } from '@/utils/exportToExcel';
 
 type DelegateWithRelations = {
   id: string;
@@ -45,6 +46,10 @@ export default function DelegatePageClient({ delegates: initialDelegates }: Prop
     setPage(0); // Reset to the first page whenever rows per page changes
   };
 
+  const handleExport = () => {
+    exportToExcel(delegates, 'Delegates');
+  };
+
   const paginatedDelegates = applyPagination(delegates || [], page, rowsPerPage);
 
   return (
@@ -54,7 +59,7 @@ export default function DelegatePageClient({ delegates: initialDelegates }: Prop
           <Typography variant="h4">Delegates</Typography>
           <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
             <UploadList />
-            <Button color="inherit" startIcon={<DownloadIcon fontSize="var(--icon-fontSize-md)" />}>
+            <Button color="inherit" startIcon={<DownloadIcon fontSize="var(--icon-fontSize-md)" onClick={handleExport}/>}>
               Export
             </Button>
           </Stack>

@@ -17,6 +17,7 @@ import type { Integration } from '@/components/dashboard/companies/companies-car
 import { CompaniesFilters } from '@/components/dashboard/companies/companies-filters';
 import { Delegate, SponsorCompany } from '@prisma/client';
 import { CompaniesTable } from '@/components/dashboard/companies/companies-table';
+import { exportToExcel } from '@/utils/exportToExcel';
 
 export const metadata = { title: `Integrations | Dashboard | ${config.site.name}` } satisfies Metadata;
 
@@ -51,7 +52,11 @@ export default function CompaniesPageClient({ companies:initialCompanies }: Prop
   const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0); // Reset to the first page whenever rows per page changes
-  };  
+  };
+
+  const handleExport = () => {
+    exportToExcel(companies, 'Companies');
+  };
 
   const paginatedCompanies = applyPagination(companies || [], page, rowsPerPage);
 
@@ -61,7 +66,7 @@ export default function CompaniesPageClient({ companies:initialCompanies }: Prop
         <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
           <Typography variant="h4">Companies</Typography>
           <Stack sx={{ alignItems: 'center' }} direction="row" spacing={1}>
-            <Button color="inherit" startIcon={<DownloadIcon fontSize="var(--icon-fontSize-md)" />}>
+            <Button color="inherit" startIcon={<DownloadIcon fontSize="var(--icon-fontSize-md)" onClick={handleExport} />}>
               Export
             </Button>
           </Stack>

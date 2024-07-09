@@ -10,6 +10,7 @@ import { config } from '@/config';
 import { CompaniesFilters } from '@/components/dashboard/companies/companies-filters';
 import { Delegate, SponsorCompany } from '@prisma/client';
 import { PaymentsTable } from '@/components/dashboard/payments/payments-table';
+import { exportToExcel } from '@/utils/exportToExcel';
 
 export const metadata = { title: `Payments | Dashboard | ${config.site.name}` } satisfies Metadata;
 
@@ -52,6 +53,11 @@ export default function PaymentsPageClient({ payments: initialPayments }: Props)
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0); // Reset to the first page whenever rows per page changes
   };
+
+  const handleExport = () => {
+    exportToExcel(payments, 'Payments');
+  };
+
   const paginatedPayments = applyPagination(payments || [], page, rowsPerPage);
 
   return (
@@ -60,7 +66,7 @@ export default function PaymentsPageClient({ payments: initialPayments }: Props)
         <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
           <Typography variant="h4">Payments</Typography>
           <Stack sx={{ alignItems: 'center' }} direction="row" spacing={1}>
-            <Button color="inherit" startIcon={<DownloadIcon fontSize="var(--icon-fontSize-md)" />}>
+            <Button color="inherit" startIcon={<DownloadIcon fontSize="var(--icon-fontSize-md)" onClick={handleExport} />}>
               Export
             </Button>
           </Stack>
