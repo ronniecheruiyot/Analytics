@@ -5,9 +5,6 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { Download as DownloadIcon } from '@phosphor-icons/react/dist/ssr/Download';
-import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
-import { Upload as UploadIcon } from '@phosphor-icons/react/dist/ssr/Upload';
-import dayjs from 'dayjs';
 
 import { DelegatesFilters } from '@/components/dashboard/delegates/delegates-filters';
 import { DelegatesTable } from '@/components/dashboard/delegates/delegates-table';
@@ -34,11 +31,10 @@ type Props = {
   delegates: DelegateWithRelations[];
 };
 
-export default function PageClient({ delegates: initialDelegates }: Props) {
+export default function DelegatePageClient({ delegates: initialDelegates }: Props) {
   const [delegates, setDelegates] = React.useState<DelegateWithRelations[]>(initialDelegates);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [loading, setLoading] = React.useState(false);
 
   const handlePageChange = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
     setPage(newPage);
