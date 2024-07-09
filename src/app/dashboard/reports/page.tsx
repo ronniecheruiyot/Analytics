@@ -14,15 +14,16 @@ export default function Page(): React.JSX.Element {
   return (
     <Stack spacing={3}>
       <div>
-        <Typography variant="h4">Account</Typography>
+        <Typography variant="h4">Reports</Typography>
       </div>
       <Grid container spacing={3}>
-        <Grid lg={4} md={6} xs={12}>
+        Coming soon...
+        {/* <Grid lg={4} md={6} xs={12}>
           <ReportsInfo />
         </Grid>
         <Grid lg={8} md={6} xs={12}>
           <ReportsDetailsForm/>
-        </Grid>
+        </Grid> */}
       </Grid>
     </Stack>
   );
