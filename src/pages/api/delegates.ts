@@ -70,13 +70,14 @@ export default async function fetch(req: NextApiRequest, res: NextApiResponse) {
           console.log("groupDelegatesByMonth", groupDelegatesByMonth)
 
 
-          // Fill in the missing months with 0 amount
+          // Fill in the missing months with 0
           const filledResults = monthsOfYear.map((date) => {
             const monthKey = format(date, 'yyyy-MM');
             return groupDelegatesByMonth[monthKey] || { month: monthKey, totalDelegates: 0 };
           });
 
           res.status(200).send(filledResults);
+          
         }catch (error) {
           res.status(500).json({error: 'Failed to fetch data' });
         }

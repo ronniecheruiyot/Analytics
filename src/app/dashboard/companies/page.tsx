@@ -26,7 +26,7 @@ type Props = {
 };
 
 async function getCompanies() {
-  const res = await fetch(`http://localhost:3000/api/companies`, { cache: 'no-store' })
+  const res = await fetch(`http://localhost:3000/api/companies?endpoint=getAllCompanies`, { cache: 'no-store' })
   const companies = await res.json()
   return companies
 }

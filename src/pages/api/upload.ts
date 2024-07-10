@@ -14,8 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // Insert data into the database
       for (const record of data) {
         const phoneString = record.Phone.toString()
-        //console.log('phoneString',phoneString);
-
+      
         //Check if delegate exists
         const delegateExist = await prisma.delegate.findFirst({
           where: {
@@ -24,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             phone: phoneString
           },
         });
-        // console.log('delegateExist',delegateExist);
+        console.log('delegateExist!!!!!!',delegateExist);
           
           //Check if delegate's company exists
           let company = await prisma.sponsorCompany.findFirst({
