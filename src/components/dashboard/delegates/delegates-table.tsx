@@ -40,20 +40,19 @@ interface DelegatesTableProps {
   page?: number;
   rows?: Delegate[];
   rowsPerPage?: number;
-}
-
-function noop(): void {
-  // do nothing
+  onPageChange: (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => void;
+  onRowsPerPageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export function DelegatesTable({
   count = 0,
   rows = [],
   page = 0,
-  rowsPerPage = 0,
+  rowsPerPage = 10,
+  onPageChange,
+  onRowsPerPageChange,
 }: DelegatesTableProps): React.JSX.Element {
-  
-  
+
   const rowIds = React.useMemo(() => {
     return rows.map((delegate) => delegate.id);
   }, [rows]);
@@ -96,8 +95,6 @@ export function DelegatesTable({
           <TableBody>
             {rows.map((row) => {
               const isSelected = selected?.has(row.id);
-              console.log('rows',row.payment[0]?.paymentMode);
-
               return (
                 <TableRow hover key={row.id} selected={isSelected}>
                   <TableCell padding="checkbox">
@@ -131,34 +128,12 @@ export function DelegatesTable({
       <TablePagination
         component="div"
         count={count}
-        onPageChange={noop}
-        onRowsPerPageChange={noop}
+        onPageChange={onPageChange}
+        onRowsPerPageChange={onRowsPerPageChange}
         page={page}
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[5, 10, 25]}
       />
     </Card>
   );
-}
-
-export default function DelegatesPage(): React.JSX.Element {
-  const [delegates, setDelegates] = React.useState<Delegate[]>([]);
-  const [loading, setLoading] = React.useState<boolean>(true);
-
-  React.useEffect(() => {
-    async function fetchData() {
-      const response = await fetch('/api/delegates');
-      const data = await response.json();
-      setDelegates(data);
-      setLoading(false);
-    }
-
-    fetchData();
-  }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  return <DelegatesTable rows={delegates} count={delegates.length} rowsPerPage={10} page={0} />;
 }
