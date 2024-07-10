@@ -11,8 +11,10 @@ interface Data {
   Phone: string;
   IhrmNumber: string;
   JobTitle: string;
-  CompanyId?: number;
   PaymentId?: number;
+  PaymentMode?: string;
+  Amount: number;
+  Currency: string;
   CompanyName: string,
   ContactPersonName?: string,
   ContactPersonEmail?: string,

@@ -42,10 +42,8 @@ interface CompaniesTableProps {
   page?: number;
   rows?: Companies[];
   rowsPerPage?: number;
-}
-
-function noop(): void {
-  // do nothing
+  onPageChange: (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => void;
+  onRowsPerPageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export function CompaniesTable({
@@ -53,6 +51,8 @@ export function CompaniesTable({
   rows = [],
   page = 0,
   rowsPerPage = 0,
+  onPageChange,
+  onRowsPerPageChange,
 }: CompaniesTableProps): React.JSX.Element {
   
   const rowIds = React.useMemo(() => {
@@ -131,8 +131,8 @@ export function CompaniesTable({
       <TablePagination
         component="div"
         count={count}
-        onPageChange={noop}
-        onRowsPerPageChange={noop}
+        onPageChange={onPageChange}
+        onRowsPerPageChange={onRowsPerPageChange}
         page={page}
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[5, 10, 25]}
