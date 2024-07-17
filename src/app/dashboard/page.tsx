@@ -109,7 +109,7 @@ const fetchData = async (): Promise<DataProps> => {
     }
     return acc
   }, []);
-  console.log("delegatePayments!!!!!", delegatePayments)
+  // console.log("delegatePayments!!!!!", delegatePayments)
 
   //AllPayments
   const allPaymentSum = delegatePayments.reduce((accumulator, obj) =>{
@@ -120,7 +120,7 @@ const fetchData = async (): Promise<DataProps> => {
 
   //Get count of paymentTotal adding up or >= than 80,000
   const fullPayments = delegatePayments.filter(item => item.totalAmount >= fullPayment)
-  console.log("fullPayments", fullPayments)
+  // console.log("fullPayments", fullPayments)
   const fullPaymentCount = fullPayments.length
   const fullPaymentSum = fullPayments.reduce((accumulator, obj) =>{
     return accumulator += obj.totalAmount
@@ -129,7 +129,7 @@ const fetchData = async (): Promise<DataProps> => {
 
   //This gets partial payments count sum by delegate
   const partialPayments = delegatePayments.filter(item => item.totalAmount < fullPayment)
-  console.log("partialPayments", partialPayments)
+  // console.log("partialPayments", partialPayments)
   const partialPaymentsCount = partialPayments.length
   const partialPaymentSum = partialPayments.reduce((accumulator, obj) =>{
     return accumulator += obj.totalAmount
@@ -204,7 +204,7 @@ const Content = async ({ dataPromise }: { dataPromise: Promise<DataProps> }) => 
   const avg = (currMonthCompaniesCount + prevMonthCompaniesCount) / 2
   const perDiff = (diff / prevMonthCompaniesCount) * 100
 
-  console.log("companies@!!!", prevMonthCompaniesCount, currMonthCompaniesCount,diff, perDiff)
+  // console.log("companies@!!!", prevMonthCompaniesCount, currMonthCompaniesCount,diff, perDiff)
 
   return (
     <Grid container spacing={3}>

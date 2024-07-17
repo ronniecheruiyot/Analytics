@@ -1,7 +1,7 @@
 import * as XLSX from 'xlsx';
 
 export function exportToExcel(data: any[], fileName: string) {
-  //console.log('data',data);
+  // console.log('data',data);
   // Convert data to a worksheet
   const worksheet = XLSX.utils.json_to_sheet(data);
   // Create a new workbook and append the worksheet

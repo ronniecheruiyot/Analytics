@@ -59,7 +59,9 @@ export default function DelegatePageClient({ delegates: initialDelegates }: Prop
           <Typography variant="h4">Delegates</Typography>
           <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
             <UploadList />
-            <Button color="inherit" startIcon={<DownloadIcon fontSize="var(--icon-fontSize-md)" onClick={handleExport}/>}>
+            <Button color="inherit"
+            onClick={handleExport}
+             startIcon={<DownloadIcon fontSize="var(--icon-fontSize-md)" />}>
               Export
             </Button>
           </Stack>

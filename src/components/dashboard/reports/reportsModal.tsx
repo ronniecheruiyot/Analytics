@@ -13,6 +13,8 @@ import { spacing } from '@mui/system';
 import { Divider, Grid } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import SaveIcon from '@mui/icons-material/Save';
+import { exportToExcel } from '@/utils/exportToExcel';
+import { getpaymentReportUrl } from '@/globalConstants';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -27,7 +29,7 @@ const style = {
 };
 
 export default function ReportsModal({modal, setModal, name}: {modal: boolean, setModal: (boolean: boolean) => void, name: string}) {
-  const [from, setFrom] = React.useState<Dayjs | null>(dayjs(new Date().toISOString()));
+  const [from, setFrom] = React.useState<Dayjs | null>(dayjs(new Date()));
   const [to, setTo] = React.useState<Dayjs | null>(dayjs(new Date().toISOString()));
   const [loading, setloading] = React.useState(false);
 
@@ -35,20 +37,24 @@ export default function ReportsModal({modal, setModal, name}: {modal: boolean, s
   // const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setModal(false)
-    setFrom((dayjs(new Date().toISOString())))
-    setTo((dayjs(new Date().toISOString())))
+    setFrom((dayjs(from)))
+    setTo((dayjs(to)))
   }
 
   const onSubmit = async() => {
-  console.log("type", name)
-  let type = (name === "Partial Payments" ? "partial" : "full") 
+  setloading(true)
+  const fromDate = from.format('YYYY-MM-DD HH:mm:ss')
+  const toDate = to.format('YYYY-MM-DD HH:mm:ss')
+  const res = await fetch(getpaymentReportUrl + `partial&from=${fromDate}&to=${toDate}`, {cache: 'no-store'})
+  const responseData = await res.json()
+  const partailPayments = responseData.filter(item => item != null && item.totalPayment < 80000)
+  const fullPayments = responseData.filter(item => item != null && item.totalPayment >= 80000)
+  const reportData = name === "Partial Payments" ? partailPayments : fullPayments
+  exportToExcel(reportData, `${name} Payments Report`);
   setloading(false)
-  const res = await fetch(`http://localhost:3000/api/reports?endpoint=${type}&from=${from}&to=${to}`, {cache: 'no-store'})
-  const reportData = await res.json()
-  return reportData
   }
 
-  console.log("Date from to", from, to)
+  // console.log("Date from to", from, to)
 
   return (
     <>
@@ -102,7 +108,7 @@ export default function ReportsModal({modal, setModal, name}: {modal: boolean, s
                 </Grid>
                 <Grid item>
                 {!loading ?
-                    <Button variant='outlined' title='cancel' color='success' onClick={onSubmit}>Download</Button>
+                    <Button variant='outlined' title='cancel' color='success' onClick={() => onSubmit()}>Download</Button>
                   :
                     <LoadingButton
                       loading
@@ -110,7 +116,7 @@ export default function ReportsModal({modal, setModal, name}: {modal: boolean, s
                       startIcon={<SaveIcon />}
                       variant="outlined"
                     >
-                      Save
+                      Downloading
                     </LoadingButton>
                 }
                 </Grid>

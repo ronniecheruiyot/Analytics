@@ -66,7 +66,9 @@ export default function CompaniesPageClient({ companies:initialCompanies }: Prop
         <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
           <Typography variant="h4">Companies</Typography>
           <Stack sx={{ alignItems: 'center' }} direction="row" spacing={1}>
-            <Button color="inherit" startIcon={<DownloadIcon fontSize="var(--icon-fontSize-md)" onClick={handleExport} />}>
+            <Button color="inherit" 
+            onClick={handleExport}
+            startIcon={<DownloadIcon fontSize="var(--icon-fontSize-md)"/>}>
               Export
             </Button>
           </Stack>
