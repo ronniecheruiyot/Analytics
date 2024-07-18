@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { config } from '@/config';
 import { Delegate, SponsorCompany } from '@prisma/client';
 import CompaniesPageClient from '@/components/dashboard/companies/page-client';
+import { allCompaniesUrl } from '@/globalConstants';
 
 export const metadata = { title: `Integrations | Dashboard | ${config.site.name}` } satisfies Metadata;
 
@@ -26,7 +27,7 @@ type Props = {
 };
 
 async function getCompanies() {
-  const res = await fetch(`http://localhost:3000/api/companies?endpoint=getAllCompanies`, { cache: 'no-store' })
+  const res = await fetch(allCompaniesUrl, { cache: 'no-store' })
   const companies = await res.json()
   return companies
 }

@@ -11,6 +11,7 @@ import { CompaniesFilters } from '@/components/dashboard/companies/companies-fil
 import { Delegate, SponsorCompany } from '@prisma/client';
 import { PaymentsTable } from '@/components/dashboard/payments/payments-table';
 import { exportToExcel } from '@/utils/exportToExcel';
+import { allPaymentsUrl } from '@/globalConstants';
 
 export const metadata = { title: `Payments | Dashboard | ${config.site.name}` } satisfies Metadata;
 
@@ -35,7 +36,7 @@ type Props = {
 
 
 async function getPayments() {
-  const res = await fetch(`http://localhost:3000/api/payments?endpoint=getAllPayments`, { cache: 'no-store' })
+  const res = await fetch(allPaymentsUrl, { cache: 'no-store' })
   const payments = await res.json()
   return payments
 }

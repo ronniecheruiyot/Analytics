@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { config } from '@/config';
 import { Delegate, SponsorCompany } from '@prisma/client';
 import PaymentsPageClient from '@/components/dashboard/payments/page-client';
+import { allPaymentsUrl } from '@/globalConstants';
 
 export const metadata = { title: `Payments | Dashboard | ${config.site.name}` } satisfies Metadata;
 
@@ -27,7 +28,7 @@ type Props = {
 
 
 async function getPayments() {
-  const res = await fetch(`http://localhost:3000/api/payments?endpoint=getAllPayments`, { cache: 'no-store' })
+  const res = await fetch(allPaymentsUrl, { cache: 'no-store' })
   const payments = await res.json()
   return payments
 }
