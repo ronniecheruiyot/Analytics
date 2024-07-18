@@ -5,7 +5,7 @@ import { startOfYear, endOfYear, eachMonthOfInterval, format } from 'date-fns';
 const prisma = new PrismaClient({ log: ['query', 'info', 'warn', 'error'], });
 
 export default async function fetch(req: NextApiRequest, res: NextApiResponse) {
-  const {method, query: {endpoint}} = req
+  const {method, query: {endpoint, from, to}} = req
   switch (endpoint){
     case "getAllDelegates":
       if (method === 'GET') {
@@ -28,6 +28,33 @@ export default async function fetch(req: NextApiRequest, res: NextApiResponse) {
         res.status(405).end(`Method ${req.method} Not Allowed`);
       }
       break;
+    case "listDelegatesBetweenDates":
+    if (method === 'GET') {
+      try {
+        // Get all delegates
+        const delegates = await prisma.delegate.findMany({
+          include: {
+            sponsorCompany: true,
+            payment: true,
+          },
+          where: {
+            createdAt: {
+              gte: new Date(from).toISOString(),
+              lte: new Date(to).toISOString()
+            }
+          }
+        });
+  
+        res.status(200).send(delegates);
+      } catch (error) {
+        console.log("error!!!!", error)
+        res.status(500).json({error: 'Failed to fetch data' });
+      }
+    } else {
+      res.setHeader('Allow', ['GET']);
+      res.status(405).end(`Method ${req.method} Not Allowed`);
+    }
+    break;
     case "getDelegatesByMonth":
       if(method === "GET"){
         const currentYear = new Date().getFullYear();

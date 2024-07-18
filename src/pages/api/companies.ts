@@ -48,7 +48,7 @@ interface AggregatedCompany extends Omit<Company, 'delegates'> {
 const companies: Company[] = [/* your companies data here */];
 
 export default async function fetch(req: NextApiRequest, res: NextApiResponse) {
-  const {method, query: {endpoint}} = req
+  const {method, query: {endpoint, from, to}} = req
 
   switch (endpoint){
     case "getAllCompanies":
@@ -64,7 +64,61 @@ export default async function fetch(req: NextApiRequest, res: NextApiResponse) {
               }
             },
           });
-          console.log('createdAt', typeof(companies[0].createdAt));
+          
+          const companiesWithAggregates = companies.reduce<{ [key: string]: AggregatedCompany }>((acc, company) => {
+            const companyName = company.companyName;
+            if (!acc[companyName]) {
+                acc[companyName] = {
+                    ...company,
+                    delegateCount: 0,
+                    totalAmountPaid: 0,
+                    delegates: []
+                };
+            }
+        
+            acc[companyName].delegateCount += company.delegates.length;
+            acc[companyName].totalAmountPaid += company.delegates.reduce((total, delegate) => {
+                return total + (delegate.payment?.amount || 0);
+            }, 0);
+        
+            acc[companyName].delegates.push(...company.delegates);
+        
+            return acc;
+        }, {});
+        
+        const aggregatedCompanies = Object.values(companiesWithAggregates);
+        
+        //console.log(aggregatedCompanies)
+    
+          res.status(200).send(aggregatedCompanies);
+        } catch (error) {
+          res.status(500).json({error: 'Failed to fetch data' });
+        }
+      } else {
+        res.setHeader('Allow', ['GET']);
+        res.status(405).end(`Method ${req.method} Not Allowed`);
+      }
+      break;
+
+      case "listCompaniesBetweenDates":
+      if (method === 'GET') {
+        try {
+          // Get all companies
+          const companies = await prisma.sponsorCompany.findMany({
+            include: {
+              delegates: {
+                include: {
+                  payment: true,
+                },
+              }
+            },
+            where: {
+              createdAt: {
+                gte: new Date(from).toISOString(),
+                lte: new Date(to).toISOString()
+              }
+            }
+          });
           
           const companiesWithAggregates = companies.reduce<{ [key: string]: AggregatedCompany }>((acc, company) => {
             const companyName = company.companyName;

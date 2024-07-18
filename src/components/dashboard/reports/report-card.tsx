@@ -30,9 +30,9 @@ export function ReportsCard({name} : {name: String}): React.JSX.Element {
             <Avatar src={user.avatar} sx={{ height: '80px', width: '80px' }} />
           </div> */}
           <Stack spacing={1} sx={{ textAlign: 'center' }}>
-            <Typography variant="subtitle1">Delegates</Typography>
-            <Typography color="text.secondary" variant="body2">
-              {name} Payments
+            {/* <Typography variant="subtitle1">Delegates</Typography> */}
+            <Typography color="text.secondary" variant="subtitle1">
+              {name}
             </Typography>
             {/* <Typography color="text.secondary" variant="body2">
               {user.timezone}
@@ -47,7 +47,7 @@ export function ReportsCard({name} : {name: String}): React.JSX.Element {
         </Button>
       </CardActions>
     </Card>
-    <ReportsModal modal={modal} setModal={setModal} name={`${name} Payments`}/>
+    <ReportsModal modal={modal} setModal={setModal} name={`${name}`}/>
     </>
   );
 }

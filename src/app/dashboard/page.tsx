@@ -15,6 +15,7 @@ import { PartialPayments } from '@/components/dashboard/overview/partial-payment
 import { promises as fs } from 'fs';
 import UploadList from '@/components/dashboard/overview/upload-list';
 import { DelegatesChart } from '@/components/dashboard/overview/delegatesChart';
+import { allCompaniesUrl, allDelegatesUrl, allPaymentsUrl, groupedCompanyCountBymonthUrl, groupedDelegatesByMonthUrl, groupedPaymentsCountByMonthUrl } from '@/globalConstants';
 
 export const metadata = { title: `Overview | Dashboard | ${config.site.name}` } satisfies Metadata;
 
@@ -44,12 +45,12 @@ interface DataProps {
 
 const fetchData = async (): Promise<DataProps> => {
   const endpoints = {
-    delegates: 'http://localhost:3000/api/delegates?endpoint=getAllDelegates',
-    groupedDelegates: 'http://localhost:3000/api/delegates?endpoint=getDelegatesByMonth',
-    totalCompanies: 'http://localhost:3000/api/companies?endpoint=getAllCompanies',
-    groupedCompanyCountBymonth: 'http://localhost:3000/api/companies?endpoint=getCompaniesBymonth',
-    totalPayments: 'http://localhost:3000/api/payments?endpoint=getAllPayments',
-    groupedPayments: 'http://localhost:3000/api/payments?endpoint=getPaymentsBy',
+    delegates: allDelegatesUrl,
+    groupedDelegates: groupedDelegatesByMonthUrl,
+    totalCompanies: allCompaniesUrl,
+    groupedCompanyCountBymonth: groupedCompanyCountBymonthUrl,
+    totalPayments: allPaymentsUrl,
+    groupedPayments: groupedPaymentsCountByMonthUrl,
   };
 
   const fetchEndpoint = async (url: string) => {

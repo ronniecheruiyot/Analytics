@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { config } from '@/config';
 import { Delegate } from '@prisma/client';
 import DelegatePageClient from '@/components/dashboard/delegates/page-client';
+import { allDelegatesUrl } from '@/globalConstants';
 
 type DelegateWithRelations = Delegate & {
   id: string;
@@ -26,7 +27,7 @@ type Props = {
 };
 
 async function getDelegates() {
-  const res = await fetch(`http://localhost:3000/api/delegates?endpoint=getAllDelegates`, { cache: 'no-store' })
+  const res = await fetch(allDelegatesUrl, { cache: 'no-store' })
   const delegates = await res.json()
   return delegates
 }

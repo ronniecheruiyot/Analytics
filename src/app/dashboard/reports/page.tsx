@@ -18,10 +18,16 @@ export default function Page(): React.JSX.Element {
       </Grid>
       <Grid container spacing={3}>
         <Grid lg={4} md={6} xs={12}>
-          <ReportsCard name="Partial"/>
+          <ReportsCard name="Partial Payments"/>
         </Grid>
         <Grid lg={4} md={6} xs={12}>
-          <ReportsCard name="Full"/>
+          <ReportsCard name="Full Payments"/>
+        </Grid>
+        <Grid lg={4} md={6} xs={12}>
+          <ReportsCard name="Companies"/>
+        </Grid>
+        <Grid lg={4} md={6} xs={12}>
+          <ReportsCard name="Delegates"/>
         </Grid>
       
       </Grid>

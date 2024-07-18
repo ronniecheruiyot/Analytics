@@ -14,7 +14,8 @@ import { Divider, Grid } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import SaveIcon from '@mui/icons-material/Save';
 import { exportToExcel } from '@/utils/exportToExcel';
-import { getpaymentReportUrl } from '@/globalConstants';
+import { allCompaniesUrl, allDelegatesUrl, getCompanyReportUrl, getDelegatesReportUrl, getpaymentReportUrl } from '@/globalConstants';
+import { PartialPayments } from '../overview/partial-payments';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -39,19 +40,33 @@ export default function ReportsModal({modal, setModal, name}: {modal: boolean, s
     setModal(false)
     setFrom((dayjs(from)))
     setTo((dayjs(to)))
+    setloading(false)
   }
 
   const onSubmit = async() => {
-  setloading(true)
-  const fromDate = from.format('YYYY-MM-DD HH:mm:ss')
-  const toDate = to.format('YYYY-MM-DD HH:mm:ss')
-  const res = await fetch(getpaymentReportUrl + `partial&from=${fromDate}&to=${toDate}`, {cache: 'no-store'})
-  const responseData = await res.json()
-  const partailPayments = responseData.filter(item => item != null && item.totalPayment < 80000)
-  const fullPayments = responseData.filter(item => item != null && item.totalPayment >= 80000)
-  const reportData = name === "Partial Payments" ? partailPayments : fullPayments
-  exportToExcel(reportData, `${name} Payments Report`);
-  setloading(false)
+    setloading(true)
+    const fromDate = from.format('YYYY-MM-DD HH:mm:ss')
+    const toDate = to.format('YYYY-MM-DD HH:mm:ss')
+
+    if(name === "Full Payments" || name === "Partial Payments"){
+      const res = await fetch(getpaymentReportUrl + `?from=${fromDate}&to=${toDate}`, {cache: 'no-store'})
+      const responseData = await res.json()
+      const partailPayments = responseData.filter(item => item != null && item.totalPayment < 80000)
+      const fullPayments = responseData.filter(item => item != null && item.totalPayment >= 80000)
+      const reportData = name === "Partial Payments" ? partailPayments : fullPayments
+      exportToExcel(reportData, `${name} Payments Report`);
+    } else if(name === "Companies"){
+      const res = await fetch(getCompanyReportUrl + `&from=${from}&to=${to}`, { cache: 'no-store' })
+      const companies = await res.json()
+      exportToExcel(companies, `${name} Report`);
+    }else if(name === "Delegates"){
+      const res = await fetch(getDelegatesReportUrl + `&from=${from}&to=${to}`, { cache: 'no-store' })
+      const delegates = await res.json()
+      exportToExcel(delegates, `${name} Report`);
+    }
+    
+
+    handleClose()
   }
 
   // console.log("Date from to", from, to)
@@ -108,7 +123,7 @@ export default function ReportsModal({modal, setModal, name}: {modal: boolean, s
                 </Grid>
                 <Grid item>
                 {!loading ?
-                    <Button variant='outlined' title='cancel' color='success' onClick={() => onSubmit()}>Download</Button>
+                    <Button variant='outlined' title='cancel' color='success' onClick={onSubmit}>Download</Button>
                   :
                     <LoadingButton
                       loading
